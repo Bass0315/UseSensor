@@ -10,7 +10,7 @@
 #include <SeeedGrayOLED.h>
 
 
-void OLED128x128_Init(void);
+void OLED96x96_Init(void);
 void OLED_Write(uint8_t x,uint8_t y,char *string);
 
 

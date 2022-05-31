@@ -1,8 +1,6 @@
 #include "User_TCA9548A_IICHub.h"
 
 extern TCA9548A<TwoWire> TCA;
-extern String rec_string;
-extern bool command_flag;
 
 uint8_t TCA_CHANNEL[] = {TCA_CHANNEL_0, TCA_CHANNEL_1, TCA_CHANNEL_2, TCA_CHANNEL_3, TCA_CHANNEL_4, TCA_CHANNEL_5, TCA_CHANNEL_6, TCA_CHANNEL_7};
 
@@ -17,7 +15,7 @@ void ScanAddress(void)
   uint8_t error, i2cAddress, devCount, unCount;
   for (uint8_t i = 0; i < 8; i++)
   {
-    //TCA.openChannel(TCA_CHANNEL[i]);
+    TCA.openChannel(TCA_CHANNEL[i]);
     Serial.print("CHANNEL: ");
     Serial.println(i);
 
@@ -58,7 +56,7 @@ void ScanAddress(void)
     }
     Serial.println();
     delay(1000);
-    //TCA.closeChannel(TCA_CHANNEL[i]);
+    TCA.closeChannel(TCA_CHANNEL[i]);
   }
 }
 
@@ -72,7 +70,7 @@ bool findAddress(uint8_t chanel, uint8_t address)
   error = WIRE.endTransmission();
   if (error == 0)
   {
-    Serial.print("I2C device found at 0x");
+    Serial.print("I2CAddress 0x");
     if (address < 16)Serial.print("0");
     Serial.println(address, HEX);
     TCA.closeChannel(chanel);
@@ -80,7 +78,7 @@ bool findAddress(uint8_t chanel, uint8_t address)
   }
   else if (error == 4)
   {
-    Serial.print("Unknow error at 0x");
+    Serial.print("Unknow 0x");
     if (address < 16) Serial.print("0");
     Serial.println(address, HEX);
   }

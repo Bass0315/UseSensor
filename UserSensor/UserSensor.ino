@@ -1,6 +1,7 @@
 //TCA9548A IIC HUB.
 #include "User_TCA9548A_IICHub.h"
 TCA9548A<TwoWire> TCA;
+extern uint8_t TCA_CHANNEL[];
 
 //OLED128x128.
 #include "User_OLED96x96.h"
@@ -8,7 +9,12 @@ TCA9548A<TwoWire> TCA;
 //Push Check.
 #include "User_CheckPush.h"
 
-extern uint8_t TCA_CHANNEL[];
+//SHT4X
+#include "User_SHT4X.h"
+SHTSensor SHT4X(SHTSensor::SHT4X);
+
+//Serial CO2
+#include "User_SerialCO2.h"
 
 const int BH1721_ADDR = 0x23;
 
@@ -98,44 +104,33 @@ BH1721 bh1721;
 
 float BH1721[8][11] = {0};   //BH1721[?][0] is address flage.
 
-void BH1721_Init(float rg_aOKChannel[][11])
+void BH1721_Init(void)
 {
   bh1721.begin();
-  for (uint8_t i = 0; i < 8; i++)
-  {
-    if (findAddress(TCA_CHANNEL[i], BH1721_ADDR))
-    {
-      TCA.openChannel(TCA_CHANNEL[i]);
-      if (!bh1721.startMeasure(BH1721::measModeAR))
-      {
-        Serial.println("Channel:" + String(TCA_CHANNEL[i]) + " ,Cannot start measurements.");
-      }
-      rg_aOKChannel[i][0] = 1;
-      TCA.closeChannel(TCA_CHANNEL[i]);
-    }
-    else
-    {
-      Serial.println("Channel:" + String(TCA_CHANNEL[i]) + " ,Not found address.");
-      rg_aOKChannel[i][0] = 0;
-    }
-  }
 }
 
 
-void fnGetBH1721Value(float re_aBH1721Value[][11])
+void fnReadBH1721(void)
 {
   char strBuffer[20];
   float lux;
   SeeedGrayOled.clearDisplay();           //Clear Display.
   for (uint8_t iChannel = 0; iChannel < 8; iChannel++)
   {
-    if (re_aBH1721Value[iChannel][0] == 1) //BH1721 address is online in this channel.
+    if (findAddress(TCA_CHANNEL[iChannel], BH1721_ADDR))
     {
       TCA.openChannel(TCA_CHANNEL[iChannel]);
+      if (!bh1721.startMeasure(BH1721::measModeAR))
+      {
+        Serial.println("Channel:" + String(TCA_CHANNEL[iChannel]) + " ,Cannot start measurements.");
+        break;
+      }
       if (bh1721.readLux(&lux))
       {
-
-        Serial.println("Luminosity: " + String(lux) + " lux");
+        //Serial.println("Luminosity: " + String(lux) + " lux");
+        //Serial.println("Ch: " + String(iChannel) + ", " + String(lux) + " lux");
+        sprintf(strBuffer, "Ch: %d,  %0.2f lux.", iChannel, lux);
+        Serial.println(strBuffer);
         if (lux >= 0)
         {
           //Do something
@@ -156,38 +151,15 @@ void fnGetBH1721Value(float re_aBH1721Value[][11])
   }
 }
 
-/*
-  void fnGetBH1721ValueAvg(void)
-  {
-  float lux;
-  for (uint8_t iCount = 1; iCount < 11; i++)
-  {
-    for (uint8_t iChannel = 0; iChannel < 8; i++)
-    {
-      if (BH1721[iChannel][0])   //BH1721 address is online in this channel.
-      {
-        if (bh1721.readLux(&lux))
-        {
-          BH1721[iChannel][iCount] = lux;
-        }
-      }
-      eles
-      {
-        continue;
-      }
-    }
-  }
-  }
-*/
-
 void setup() {
   Serial.begin(115200);
+  Wire.begin();
   TCA9548A_Init();
-  OLED128x128_Init();
+  OLED96x96_Init();
+  BH1721_Init();
+  SHT4X_Init();
   Push_Init();
   while (!Serial);
-  ScanAddress();
-  
 }
 
 void loop()
@@ -195,7 +167,7 @@ void loop()
   while (!b_fnGetPush());
   if (b_fnGetPush())
   {
-    BH1721_Init(BH1721);
-    fnGetBH1721Value(BH1721);
+    fnReadBH1721();
+    fnReadSHT4X();
   }
 }

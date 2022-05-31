@@ -1,6 +1,6 @@
 #include "User_OLED96x96.h"
 
-void OLED128x128_Init(void)
+void OLED96x96_Init(void)
 {
   Wire.begin();
   SeeedGrayOled.init(SH1107G);             //initialize SEEED OLED display
