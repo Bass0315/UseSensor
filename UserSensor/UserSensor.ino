@@ -155,9 +155,9 @@ void setup() {
   Serial.begin(115200);
   Wire.begin();
   TCA9548A_Init();
-  OLED96x96_Init();
+  //OLED96x96_Init();
   BH1721_Init();
-  SHT4X_Init();
+  //SHT4X_Init();
   Push_Init();
   while (!Serial);
 }
@@ -168,6 +168,6 @@ void loop()
   if (b_fnGetPush())
   {
     fnReadBH1721();
-    fnReadSHT4X();
+    //fnReadSHT4X();
   }
 }
