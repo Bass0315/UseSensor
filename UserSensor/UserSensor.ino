@@ -155,19 +155,27 @@ void setup() {
   Serial.begin(115200);
   Wire.begin();
   TCA9548A_Init();
-  //OLED96x96_Init();
+  OLED96x96_Init();
   BH1721_Init();
-  //SHT4X_Init();
+  SHT4X_Init();
   Push_Init();
-  while (!Serial);
+  //while (!Serial);
 }
 
+bool b_KeyPush = false;
 void loop()
 {
-  while (!b_fnGetPush());
-  if (b_fnGetPush())
+  while (!b_fnGetPush())
+  {
+    b_KeyPush = false;
+    SeeedGrayOled.clearDisplay();
+  }
+
+  //test
+  if (b_fnGetPush() && !b_KeyPush)
   {
     fnReadBH1721();
     //fnReadSHT4X();
+    b_KeyPush = true;
   }
 }

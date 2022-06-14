@@ -28,6 +28,6 @@ void fnReadSHT4X(void)
       Serial.println(strBuffer);
       OLED_Write(0, iChannel * 2, strBuffer);
     }
-    TCA.closeChannel(TCA_CHANNEL[iChannel]);
+    TCA.closeAll();
   }
 }
