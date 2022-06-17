@@ -13,8 +13,14 @@ extern uint8_t TCA_CHANNEL[];
 #include "User_SHT4X.h"
 SHTSensor SHT4X(SHTSensor::SHT4X);
 
-//Serial CO2
-#include "User_SerialCO2.h"
+// PCF8574
+#include "User_PCF8574.h"
+PCF8574 PCF_8574(0x20);
+
+// User_SerialSunriseCO2
+#include "User_SerialSunriseCO2.h"
+extern int readPeriodMs;
+extern uint16_t state[];
 
 const int BH1721_ADDR = 0x23;
 
@@ -159,6 +165,8 @@ void setup() {
   BH1721_Init();
   SHT4X_Init();
   Push_Init();
+  Init_PCF8574();
+  Init_SerialSunriseCO2();
   //while (!Serial);
 }
 
@@ -174,8 +182,10 @@ void loop()
   //test
   if (b_fnGetPush() && !b_KeyPush)
   {
-    fnReadBH1721();
-    //fnReadSHT4X();
+    //fnReadBH1721();
+    fnReadSHT4X();
+    read_serialco2();
+
     b_KeyPush = true;
   }
 }

@@ -18,15 +18,15 @@ void fnReadSHT4X(void)
     {
       sprintf(strBuffer, "Ch: %d, T:%0.2f, H:%0.2f", iChannel, sht4x.getTemperature(), sht4x.getHumidity());
       Serial.println(strBuffer);
-      sprintf(strBuffer, "Ch: %d OK.", iChannel);
-      OLED_Write(0, iChannel * 2, strBuffer);
+      sprintf(strBuffer, "Ch: %d TH ---", iChannel);
+      OLED_Write(0, iChannel, strBuffer);
     }
     else
     {
       //Serial.print("Sensor 2: Error in readSample()\n");
-      sprintf(strBuffer, "Ch: %d ER.", iChannel);
+      sprintf(strBuffer, "Ch: %d TH ER.", iChannel);
       Serial.println(strBuffer);
-      OLED_Write(0, iChannel * 2, strBuffer);
+      OLED_Write(0, iChannel, strBuffer);
     }
     TCA.closeAll();
   }
