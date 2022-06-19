@@ -3,6 +3,8 @@
 
 
 
+extern bool CO2TH_sta;
+
 /* Reading period, in milliseconds. Default is 4 seconds */
 int readPeriodMs = 2000;
 
@@ -738,18 +740,35 @@ void read_serialco2(void)
     delay(readPeriodMs);
     doLow(iPin);
 
-    if (re_sta)
+    if (re_sta & CO2TH_sta)
     {
-      sprintf(strBuffer, "Ch: %d CO2 ---", iPin);
+      sprintf(strBuffer, "%d:OK", iPin);
       Serial.println(strBuffer);
-      OLED_Write(0, (iPin + 8), strBuffer);
+      
+#if (OLED96x96)
+      OLED_Write(0, iPin, strBuffer);
+#elif (OLED64x48)
+      if (!(iPin % 2))
+        OLED_Write(0, iPin, strBuffer);
+      else
+        OLED_Write(32, iPin - 1, strBuffer);
+#endif
+
     }
     else
     {
-      sprintf(strBuffer, "Ch: %d CO2 ER.", iPin);
+      sprintf(strBuffer, "%d:ER", iPin);
       Serial.println(strBuffer);
-      OLED_Write(0, (iPin + 8), strBuffer);
+      
+#if (OLED96x96)
+      OLED_Write(0, iPin, strBuffer);
+#elif (OLED64x48)
+      if (!(iPin % 2))
+        OLED_Write(0, iPin, strBuffer);
+      else
+        OLED_Write(32, iPin - 1, strBuffer);
+#endif
+
     }
   }
-
 }

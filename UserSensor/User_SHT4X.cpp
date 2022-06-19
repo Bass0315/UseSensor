@@ -7,6 +7,7 @@ void SHT4X_Init(void)
   sht4x.init();
 }
 
+bool CO2TH_sta=true;
 void fnReadSHT4X(void)
 {
   char strBuffer[20];
@@ -18,15 +19,35 @@ void fnReadSHT4X(void)
     {
       sprintf(strBuffer, "Ch: %d, T:%0.2f, H:%0.2f", iChannel, sht4x.getTemperature(), sht4x.getHumidity());
       Serial.println(strBuffer);
-      sprintf(strBuffer, "Ch: %d TH ---", iChannel);
-      OLED_Write(0, iChannel, strBuffer);
+      sprintf(strBuffer, "%d:OK", iChannel);
+/*
+      #if (OLED96x96)
+        OLED_Write(0, iChannel, strBuffer);
+      #elif (OLED64x48)
+        if (!(iChannel % 2))
+          OLED_Write(0, iChannel, strBuffer);
+        else
+          OLED_Write(32, iChannel - 1, strBuffer);
+      #endif
+*/
     }
     else
     {
       //Serial.print("Sensor 2: Error in readSample()\n");
-      sprintf(strBuffer, "Ch: %d TH ER.", iChannel);
+      sprintf(strBuffer, "%d:ER", iChannel);
       Serial.println(strBuffer);
-      OLED_Write(0, iChannel, strBuffer);
+      
+      CO2TH_sta=false;     //set flag
+/*           
+      #if (OLED96x96)
+        OLED_Write(0, iChannel, strBuffer);
+      #elif (OLED64x48)
+        if (!(iChannel % 2))
+          OLED_Write(0, iChannel, strBuffer);
+        else
+          OLED_Write(32, iChannel - 1, strBuffer);
+      #endif
+*/
     }
     TCA.closeAll();
   }

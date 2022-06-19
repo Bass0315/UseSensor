@@ -7,7 +7,9 @@
 #include <Wire.h>
 #include "SHTSensor.h"
 #include "User_TCA9548A_IICHub.h"
-#include "User_OLED96x96.h"
+#include "User_OLED.h"
+
+
 
 extern TCA9548A<TwoWire> TCA;
 extern uint8_t TCA_CHANNEL[];

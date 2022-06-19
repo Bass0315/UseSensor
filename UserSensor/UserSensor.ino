@@ -3,8 +3,11 @@
 TCA9548A<TwoWire> TCA;
 extern uint8_t TCA_CHANNEL[];
 
-//OLED128x128.
-#include "User_OLED96x96.h"
+//OLED96x96.
+#include "User_OLED.h"
+#if OLED64x48
+Adafruit_SSD1306 display = Adafruit_SSD1306(128, 64, &Wire);
+#endif
 
 //Push Check.
 #include "User_CheckPush.h"
@@ -140,19 +143,33 @@ void fnReadBH1721(void)
         if (lux >= 0)
         {
           //Do something
-          sprintf(strBuffer, "Ch: %d OK.", iChannel);
+          sprintf(strBuffer, "%d:OK", iChannel);
           Serial.println(strBuffer);
-          OLED_Write(0, iChannel * 2, strBuffer);
+          #if (OLED96x96)
+            OLED_Write(0, iChannel, strBuffer);
+          #elif (OLED64x48)
+            if (!(iChannel % 2))
+              OLED_Write(0, iChannel, strBuffer);
+            else
+              OLED_Write(32, iChannel - 1, strBuffer);
+          #endif
         }
-        TCA.closeChannel(TCA_CHANNEL[iChannel]);
+        TCA.closeAll();
       }
     }
     else
     {
       //Do something
-      sprintf(strBuffer, "Ch: %d ER.", iChannel);
+      sprintf(strBuffer, "%d:ER", iChannel);
       Serial.println(strBuffer);
-      OLED_Write(0, iChannel * 2, strBuffer);
+      #if (OLED96x96)
+          OLED_Write(0, iChannel, strBuffer);
+      #elif (OLED64x48)
+          if (!(iChannel % 2))
+            OLED_Write(0, iChannel, strBuffer);
+          else
+            OLED_Write(32, iChannel - 1, strBuffer);
+      #endif
     }
   }
 }
@@ -161,7 +178,7 @@ void setup() {
   Serial.begin(115200);
   Wire.begin();
   TCA9548A_Init();
-  OLED96x96_Init();
+  OLED_Init();
   BH1721_Init();
   SHT4X_Init();
   Push_Init();
@@ -177,6 +194,7 @@ void loop()
   {
     b_KeyPush = false;
     SeeedGrayOled.clearDisplay();
+    display.clearDisplay();
   }
 
   //test

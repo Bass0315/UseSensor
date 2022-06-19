@@ -7,9 +7,11 @@
  */
 
 #include <Wire.h>
-#include "User_OLED96x96.h"
+#include "User_OLED.h"
 
 #define SunriseSerial Serial1
+
+
 
 /* Sunrise communication address, both for Modbus and I2C */
 #define   SUNRISE_ADDR                  (const uint8_t)0x68
