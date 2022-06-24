@@ -740,11 +740,11 @@ void read_serialco2(void)
     delay(readPeriodMs);
     doLow(iPin);
 
-    if (re_sta & CO2TH_sta)
+    if (re_sta)
     {
       sprintf(strBuffer, "%d:OK", iPin);
       Serial.println(strBuffer);
-      
+/*      
 #if (OLED96x96)
       OLED_Write(0, iPin, strBuffer);
 #elif (OLED64x48)
@@ -753,13 +753,13 @@ void read_serialco2(void)
       else
         OLED_Write(32, iPin - 1, strBuffer);
 #endif
-
+*/
     }
     else
     {
       sprintf(strBuffer, "%d:ER", iPin);
       Serial.println(strBuffer);
-      
+/*      
 #if (OLED96x96)
       OLED_Write(0, iPin, strBuffer);
 #elif (OLED64x48)
@@ -768,7 +768,7 @@ void read_serialco2(void)
       else
         OLED_Write(32, iPin - 1, strBuffer);
 #endif
-
+*/
     }
   }
 }

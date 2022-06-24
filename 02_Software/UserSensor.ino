@@ -202,7 +202,7 @@ void loop()
   {
     //fnReadBH1721();
     fnReadSHT4X();
-    read_serialco2();
+    //read_serialco2();
 
     b_KeyPush = true;
   }
