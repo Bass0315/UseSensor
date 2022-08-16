@@ -145,14 +145,14 @@ void fnReadBH1721(void)
           //Do something
           sprintf(strBuffer, "%d:OK", iChannel);
           Serial.println(strBuffer);
-          #if (OLED96x96)
+#if (OLED96x96)
+          OLED_Write(0, iChannel, strBuffer);
+#elif (OLED64x48)
+          if (!(iChannel % 2))
             OLED_Write(0, iChannel, strBuffer);
-          #elif (OLED64x48)
-            if (!(iChannel % 2))
-              OLED_Write(0, iChannel, strBuffer);
-            else
-              OLED_Write(32, iChannel - 1, strBuffer);
-          #endif
+          else
+            OLED_Write(32, iChannel - 1, strBuffer);
+#endif
         }
         TCA.closeAll();
       }
@@ -162,14 +162,14 @@ void fnReadBH1721(void)
       //Do something
       sprintf(strBuffer, "%d:ER", iChannel);
       Serial.println(strBuffer);
-      #if (OLED96x96)
-          OLED_Write(0, iChannel, strBuffer);
-      #elif (OLED64x48)
-          if (!(iChannel % 2))
-            OLED_Write(0, iChannel, strBuffer);
-          else
-            OLED_Write(32, iChannel - 1, strBuffer);
-      #endif
+#if (OLED96x96)
+      OLED_Write(0, iChannel, strBuffer);
+#elif (OLED64x48)
+      if (!(iChannel % 2))
+        OLED_Write(0, iChannel, strBuffer);
+      else
+        OLED_Write(32, iChannel - 1, strBuffer);
+#endif
     }
   }
 }
@@ -193,8 +193,9 @@ void loop()
   while (!b_fnGetPush())
   {
     b_KeyPush = false;
-    SeeedGrayOled.clearDisplay();
-    display.clearDisplay();
+    //SeeedGrayOled.clearDisplay();
+    //display.clearDisplay();
+    LED_clearDisplay();
   }
 
   //test
@@ -202,7 +203,7 @@ void loop()
   {
     //fnReadBH1721();
     fnReadSHT4X();
-    //read_serialco2();
+    read_serialco2();
 
     b_KeyPush = true;
   }
